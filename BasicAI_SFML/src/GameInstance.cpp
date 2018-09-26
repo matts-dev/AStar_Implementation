@@ -5,6 +5,7 @@
 #include <chrono>
 #include <random>
 #include "MoveTypes.h"
+#include "AI_Mob.h"
 
 void GameInstance::pollInput()
 {
@@ -64,6 +65,8 @@ void GameInstance::tick()
 
 void GameInstance::render()
 {
+	static bool visualizePath = true;
+
 	window->clear();
 	background->render(*window);
 	for (auto& collideable : collidables)
@@ -72,6 +75,12 @@ void GameInstance::render()
 	}
 	window->draw(*player);
 	window->draw(*enemy);
+
+	if (visualizePath)
+	{
+		enemy->drawAIPathFinding(*window);
+	}
+
 	window->display();
 }
 
@@ -108,9 +117,11 @@ void GameInstance::postStaticInitialize()
 		player->setPosition(playerX, playerY);
 		player->setSpeed(500);
 
-		enemy = new_sp<Mob>();
+		enemy = new_sp<AI_Mob>();
 		enemy->setTexture(textureMap);
 		enemy->setTextureRect(sf::IntRect(1760, 384, 32, 32));
+		enemy->setPosition(playerX, playerY - 5*32);
+		enemy->setTarget(player);
 
 		std::random_device rng;
 		std::seed_seq seed{ rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng() }; 
@@ -120,7 +131,7 @@ void GameInstance::postStaticInitialize()
 		std::uniform_int_distribution<int> uniform_int(-boundary, boundary);
 
 
-		for(int i = 0; i < 20; ++i)
+		for(int i = 0; i < 100; ++i)
 		{
 			collidables.push_back(new_sp<Mob>());
 			collidables[i]->setTexture(textureMap);

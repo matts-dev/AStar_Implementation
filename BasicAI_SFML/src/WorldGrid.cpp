@@ -56,7 +56,7 @@ bool WorldGrid::insert(int row, int col)
 		bucket.push_back(GridBlock{ row, col });
 		bInserted = true;
 	}
-	if (bInserted) std::cerr << "claimed: " << row << " " << col << std::endl;
+	//if (bInserted) std::cerr << "claimed: " << row << " " << col << std::endl;
 
 	return bInserted;
 }

@@ -1,4 +1,5 @@
 #include "AI_Mob.h"
+#include <stdio.h>
 
 void AI_Mob::tick(float DeltaTime)
 {
@@ -13,15 +14,12 @@ void AI_Mob::tick(float DeltaTime)
 void AI_Mob::setTarget(sp<Mob>& newTarget)
 {
 	target = newTarget;
-}
-
-void AI_Mob::setTarget(wp<Mob>& newTarget)
-{
-	target = newTarget;
+	OnNewPositionArrived(getPosition());
 }
 
 void AI_Mob::OnNewPositionArrived(sf::Vector2f newPosition)
 {
+	if (verbose) printf("AI:newPostionArrived\n");
 	if (sp<Mob> targetSP = target.lock())
 	{
 		const sf::Vector2i& targetPosition = targetSP->getGridLocation();
@@ -37,12 +35,28 @@ void AI_Mob::OnNewPositionArrived(sf::Vector2f newPosition)
 
 }
 
+void AI_Mob::drawAIPathFinding(sf::RenderWindow& window)
+{
+	astarComponent.draw(window);
+}
+
 void AI_Mob::moveToNextAStarInSequence()
 {
+
 	const std::vector< sp<AStarNode> >& moveSequence = astarComponent.getSequence();
 	if (moveSequence.size() > 0)
 	{
-		Mob::setNextMoveDirection(moveSequence[0]->dir);
+		MoveDir direction = moveSequence[0]->takeDirectionFromHere;
+		Mob::setNextMoveDirection(direction);
+		if (verbose) printf("AI:moveToNext %s\n", Utils::toString(direction));
+	}
+
+	if (verbose)
+	{
+		for (size_t i = 0; i < moveSequence.size(); ++i)
+		{
+			printf("AI:moveToNext %s\n", Utils::toString(moveSequence[i]->takeDirectionFromHere));
+		}
 	}
 }
 

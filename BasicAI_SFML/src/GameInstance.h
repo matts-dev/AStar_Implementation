@@ -3,9 +3,11 @@
 #include <iostream>
 #include "Utilities/SmartPtrTypedefs.h"
 #include <SFML/Graphics.hpp>
-#include "Mob.h"
+//#include "Mob.h"
 #include "WorldGrid.h"
 
+class Mob;
+class AI_Mob;
 class Background;
 
 class GameInstance
@@ -18,7 +20,7 @@ private: //fields
 	sp<sf::RenderWindow> window;
 
 	sp<Mob> player;
-	sp<Mob> enemy;
+	sp<AI_Mob> enemy;
 	sp<Background> background;
 	std::vector<sp<Mob>> collidables;
 	WorldGrid worldGrid;

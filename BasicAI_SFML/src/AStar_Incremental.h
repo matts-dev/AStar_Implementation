@@ -4,10 +4,12 @@
 #include <queue>
 #include "Utilities/SmartPtrTypedefs.h"
 #include <unordered_map>
+#include "SFML/Graphics/RenderWindow.hpp"
 
 struct AStarNode
 {
-	MoveDir dir;
+	MoveDir directionToGetHere;
+	MoveDir takeDirectionFromHere = MoveDir::NONE;
 	sf::Vector2i location;
 	sf::Vector2i locBeforeThis;
 	sp<AStarNode> previousNode;
@@ -18,7 +20,8 @@ struct AStarNode
 
 struct CompareNodes{
 	bool operator()(const sp<AStarNode>& a, const sp<AStarNode>& b)	{
-		return a->distanceToTargetSquared < b->distanceToTargetSquared;
+		//return a->distanceToTargetSquared < b->distanceToTargetSquared; //largest out first
+		return a->distanceToTargetSquared > b->distanceToTargetSquared;
 	}
 };
 
@@ -33,13 +36,13 @@ private: //fields
 
 private: //helpers
 	std::vector< sp<AStarNode> > generatedNodes;
-	std::unordered_multimap< int, sf::Vector2i > memo;
+	std::unordered_multimap< int, sp<AStarNode> > memo;
 	sf::Vector2i cachedTargetPos;
 	bool hasNodeBeenVisited(sp<AStarNode> node);
 
 private: //methods
 	void doXIterationSteps();
-	void doOneIteration();
+	void doOneIteration(sp<AStarNode> startNode = nullptr);
 
 public:
 	AStar_Incremental();
@@ -48,8 +51,9 @@ public:
 	bool startFind(const sf::Vector2i currentPos, const sf::Vector2i& targetPos);
 	const std::vector<sp<AStarNode>>& getSequence();
 
+	void draw(sf::RenderWindow& window);
 private:
-	void generateNewNodesFromNode(sp < AStarNode>& srcNode, std::vector<sp<AStarNode>>& generatedNodes);
+	void generateNewStatesFromNode(sp < AStarNode>& srcNode, std::vector<sp<AStarNode>>& generatedNodes);
 
 	int getDistanceSquared(sf::Vector2i fromPnt, sf::Vector2i targetPnt);
 	void cacheSolutionPath(sp<AStarNode>& newNode);
