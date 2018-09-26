@@ -14,4 +14,4 @@ I didn't intend for anyone to actually try and build this, but in case someone d
 You'll also need to find the sfml .dlls and move those to the folder of your built .exe
 
 
-Textures source: https://opengameart.org/content/dungeon-crawl-32x32-tiles
+Texture source: https://opengameart.org/content/dungeon-crawl-32x32-tiles
